@@ -40,4 +40,5 @@ Build the **Python** extension with Dynamsoft Barcode Reader SDK for Linux.
     ```
     ![camera list in Python](screenshot/linux-python-barcode-reader.PNG)
 
-
+## Blog
+[Building Python Barcode Extension with DBR 5.2 for Linux](http://www.codepool.biz/build-linux-python-barcode-extension.html)
