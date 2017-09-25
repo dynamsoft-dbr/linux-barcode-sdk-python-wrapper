@@ -16,6 +16,6 @@ def decodeFile(fileName):
 if __name__ == "__main__":
     barcode_image = input("Enter the barcode file: ");
     if not os.path.isfile(barcode_image):
-        print "It is not a valid file."
+        print("It is not a valid file.")
     else:
         decodeFile(barcode_image);
