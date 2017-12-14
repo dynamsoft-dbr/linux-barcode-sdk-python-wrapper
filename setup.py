@@ -1,9 +1,13 @@
 from distutils.core import setup, Extension
+import os, numpy
 
+numpy_include = os.path.join(os.path.dirname(numpy.__file__), "core", "include", "numpy")
+print(numpy_include)
 module_dbr = Extension('dbr',
                         sources = ['dbr.c'], 
-                        include_dirs=["/usr/local/lib/python2.7/dist-packages/numpy-1.11.2-py2.7-linux-x86_64.egg/numpy/core/include/numpy/"],
-                        libraries=['DynamsoftBarcodeReader'])
+                        include_dirs=[numpy_include],
+                        libraries=['DynamsoftBarcodeReader'],
+                        extra_compile_args=['-std=c99'])
 
 setup (name = 'DynamsoftBarcodeReader',
         version = '1.0',

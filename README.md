@@ -2,41 +2,39 @@
 Build the **Python** extension with Dynamsoft Barcode Reader SDK for Linux. 
 
 ## Environment
-* Python 2.7
+* Python 2.7/3.x
 * Ubuntu 14.0
 * [Dynamsoft Barcode SDK 5.2](https://www.dynamsoft.com/Downloads/Dynamic-Barcode-Reader-for-Linux-Download.aspx).
 
 ## How to Build the Extension 
-1. Create symlink for libDynamsoftBarcodeReaderx64.so:
+1. Create a symlink for libDynamsoftBarcodeReaderx64.so:
 
     ```
     sudo ln -s <Your PATH>/libDynamsoftBarcodeReaderx64.so /usr/lib/libDynamsoftBarcodeReader.so
     ```
 
-2. Download [Numpy 1.11.2](https://sourceforge.net/projects/numpy/files/). 
-3. Install **Numpy**:
+2. Install **Numpy**:
 
     ```
-    cd numpy-1.11.2
+    pip install numpy
+    ```
+
+3. Build the extension:
+
+    ```
+    # Python 2.7
     sudo python setup.py build install
+    # Python 3.x
+    sudo python3 setup.py build install
     ```
 
-4. Add the path of Numpy header files into **setup.py**. For example:
+4. Run the test app:
 
     ```
-    include_dirs=["/usr/local/lib/python2.7/dist-packages/numpy-1.11.2-py2.7-linux-x86_64.egg/numpy/core/include/numpy/"],
-    ``` 
-
-5. Build the extension:
-
-    ```
-    sudo setup.py build install
-    ```
-
-6. Run the test app:
-
-    ```
+    # Python 2.7
     python test.py
+    # Python 3.x
+    python3 test.py
     ```
     ![camera list in Python](screenshot/linux-python-barcode-reader.PNG)
 
