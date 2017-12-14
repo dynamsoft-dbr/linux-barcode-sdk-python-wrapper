@@ -6,8 +6,7 @@ print(numpy_include)
 module_dbr = Extension('dbr',
                         sources = ['dbr.c'], 
                         include_dirs=[numpy_include],
-                        libraries=['DynamsoftBarcodeReader'],
-                        extra_compile_args=['-std=c99'])
+                        libraries=['DynamsoftBarcodeReader'])
 
 setup (name = 'DynamsoftBarcodeReader',
         version = '1.0',
