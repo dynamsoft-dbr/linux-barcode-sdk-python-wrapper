@@ -3,8 +3,8 @@ Build the **Python** extension with Dynamsoft Barcode Reader SDK for Linux.
 
 ## Environment
 * Python 2.7/3.x
-* Ubuntu 14.0
-* [Dynamsoft Barcode SDK 5.2](https://www.dynamsoft.com/Downloads/Dynamic-Barcode-Reader-for-Linux-Download.aspx).
+* Ubuntu 16.0
+* [Dynamsoft Barcode SDK 6.2](https://www.dynamsoft.com/Downloads/Dynamic-Barcode-Reader-for-Linux-Download.aspx).
 
 ## How to Build the Extension 
 1. Create a symlink for libDynamsoftBarcodeReaderx64.so:
