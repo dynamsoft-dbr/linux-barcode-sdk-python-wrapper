@@ -1,6 +1,6 @@
 import os.path
 import dbr
-# import cv2
+import cv2
 
 def initLicense(license):
     dbr.initLicense(license)
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     if not os.path.isfile(barcode_image):
         print("It is not a valid file.")
     else:
-        initLicense("t0068MgAAAHtCgAPxEdCJN1bsu9n6YfnWDoaW7YZomIZZke2m9KynRnKSqsuQyd7Cdgo6razlb7VU3IFaKeBgg9Rq069Uihc=")
-        decodeFile(barcode_image)
-        # image = cv2.imread(barcode_image, 1)
-        # decodeBuffer(image)
+        initLicense("t0068NQAAAKTSQDbEid8CTEeNluhTXi+h35G8R03xIHsyYNzZoa2GiU2a8y7s5Z1lfHsMW5dNyZmH6jQL51HUcoB5EhpDeDk=")
+        # decodeFile(barcode_image)
+        image = cv2.imread(barcode_image, 1)
+        decodeBuffer(image)

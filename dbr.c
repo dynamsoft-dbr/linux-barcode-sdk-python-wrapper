@@ -99,40 +99,31 @@ initLicense(PyObject *self, PyObject *args)
         return NULL;
     }
 
-	int ret = DBR_InitLicenseEx(hBarcode, pszLicense);
+	int ret = DBR_InitLicense(hBarcode, pszLicense);
     return Py_BuildValue("i", ret);
 }
 
-static PyObject *createPyResults(SBarcodeResultArray *pResults)
+static PyObject *createPyResults(STextResultArray *paryResult)
 {
-    if (!pResults)
+    if (!paryResult)
     {
         printf("No barcode detected\n");
         return NULL;
     }
     // Get barcode results
-    int count = pResults->iBarcodeCount;
-	SBarcodeResult** ppBarcodes = pResults->ppBarcodes;
-	SBarcodeResult* tmp = NULL;
+    int count = paryResult->nResultsCount;
 
     // Create a Python object to store results
     PyObject* list = PyList_New(count); 
     printf("count: %d\n", count);
     PyObject* result = NULL;
-    int i = 0;
-    for (; i < count; i++)
+    for (int i = 0; i < count; i++)
     {
-        tmp = ppBarcodes[i];
-        #if defined(IS_PY3K)
-        result = PyUnicode_FromFormat("%s", tmp->pBarcodeData);
-        #else
-        result = PyString_FromString(tmp->pBarcodeData);
-        #endif
-        PyList_SetItem(list, i, Py_BuildValue("sN", tmp->pBarcodeFormatString, result)); // Add results to list
+        PyList_SetItem(list, i, Py_BuildValue("ss", paryResult->ppResults[i]->pszBarcodeFormatString, paryResult->ppResults[i]->pszBarcodeText)); // Add results to list
     }
 
     // Release memory
-    DBR_FreeBarcodeResults(&pResults);
+    DBR_FreeTextResults(&paryResult);
 
     return list;
 }
@@ -148,23 +139,27 @@ decodeFile(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    char *pFileName;
-    int iFormat;
+    char *pFileName; // File name
+    int iFormat;     // Barcode formats
     if (!PyArg_ParseTuple(args, "si", &pFileName, &iFormat)) {
         return NULL;
     }
 
-    // Initialize Dynamsoft Barcode Reader
-	int iMaxCount = 0x7FFFFFFF;
-	SBarcodeResultArray *pResults = NULL;
-	DBR_SetBarcodeFormats(hBarcode, iFormat);
-	DBR_SetMaxBarcodesNumPerPage(hBarcode, iMaxCount);
+    // Update DBR params
+	PublicParameterSettings pSettings = {0};
+	DBR_GetTemplateSettings(hBarcode, "", &pSettings);
+	pSettings.mBarcodeFormatIds = iFormat;
+	char szErrorMsgBuffer[256];
+	DBR_SetTemplateSettings(hBarcode, "", &pSettings, szErrorMsgBuffer, 256);
+
+    STextResultArray *paryResult = NULL;
 
     // Barcode detection
-    int ret = DBR_DecodeFileEx(hBarcode, pFileName, &pResults);
+    int ret = DBR_DecodeFile(hBarcode, pFileName, "");
+    DBR_GetAllTextResults(hBarcode, &paryResult);
 
     // Wrap results
-    PyObject *list = createPyResults(pResults);
+    PyObject *list = createPyResults(paryResult);
     return list;
 }
 
@@ -184,6 +179,13 @@ decodeBuffer(PyObject *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "Oi", &o, &iFormat))
         return NULL;
 
+    // Update DBR params
+	PublicParameterSettings pSettings = {0};
+	DBR_GetTemplateSettings(hBarcode, "", &pSettings);
+	pSettings.mBarcodeFormatIds = iFormat;
+	char szErrorMsgBuffer[256];
+	DBR_SetTemplateSettings(hBarcode, "", &pSettings, szErrorMsgBuffer, 256);
+    
     #if defined(IS_PY3K)
     //Refer to numpy/core/src/multiarray/ctors.c
     Py_buffer *view;
@@ -226,19 +228,17 @@ decodeBuffer(PyObject *self, PyObject *args)
     #endif
 
     // Initialize Dynamsoft Barcode Reader
-    int iMaxCount = 0x7FFFFFFF;
-	SBarcodeResultArray *pResults = NULL;
-	DBR_SetBarcodeFormats(hBarcode, iFormat);
-	DBR_SetMaxBarcodesNumPerPage(hBarcode, iMaxCount);
+    STextResultArray *paryResult = NULL;
 
     // Detect barcodes
     int depth = 24;
     int iStride = ((width * depth + 31) >> 5) << 2;
 
     PyObject *list = NULL;
-    int iRet = DBR_DecodeBufferEx(hBarcode, buffer, width, height, iStride, IPF_RGB_888, &pResults);
+    int iRet = DBR_DecodeBuffer(hBarcode, buffer, width, height, iStride, IPF_RGB_888, "");
     // Wrap results
-    list = createPyResults(pResults);
+    DBR_GetAllTextResults(hBarcode, &paryResult);
+    list = createPyResults(paryResult);
     
     #if defined(IS_PY3K)
     Py_DECREF(memoryview);
